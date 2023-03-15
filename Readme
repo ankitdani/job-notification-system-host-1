@@ -1,0 +1,36 @@
+
+steps for local host
+
+
+
+
+
+
+
+
+
+
+Steps to configure the EC2 instance
+
+1)create EC2 instance
+2)assign elastic IP
+#inorder to host the html page
+sudo su
+yum install httpd
+rpm -q httpd
+cd /var/www/html
+touch index.html
+vi index.html here paste the index.html file
+replace the ip  in the file
+
+systemctl start httpd
+python3 Broker.py &
+pyhton3 publisher.py &
+python3 splitter.py &
+
+open the elasticip in web--> you will see index.html page
+click on 'check new jobs in tech domain'
+go to postman and fire a POST request at http://54.193.229.57:5500
+use your elastic IP
+
+go to the web page and you will see a job posting notification

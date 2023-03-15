@@ -1,0 +1,160 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">    
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+    
+    <title>Job Notification System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <!-- used for making http requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        /* html, */
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            background-size: cover;
+            background-color: #e7eff5;
+        }
+
+ 
+        .center {
+            margin: auto;
+            width: 50%;
+            /* border: 3px solid green; */
+            padding: 10px;
+        }
+
+        * {
+            text-align: center;
+        }   
+
+    </style>
+</head>
+
+<body>
+    <h1 style="font-family:verdana">Job Notification System</h1>
+  
+    <div>
+        <div class = "center">
+            <center>
+                <button id="newJobs">
+                    Check the new jobs in the tech domain
+                </button>
+                <button id="noNewJobs">
+                    I no longer wish to check the jobs
+                </button>
+            </center>
+            <div id="displayJobs" style="padding: 15px; width:auto;"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    let alertOnButton;
+    let interval;
+    document.getElementById("newJobs").onclick = function (e) {
+        alertOnButton = document.getElementById("newJobs");
+        const btn = '<button class="buttonload"><i class="fa fa-spinner fa-spin"></i>loading new jobs</button>'
+        alertOnButton.innerHTML = btn;
+        alert("USA")
+    }
+    document.getElementById("noNewJobs").onclick = function (e) {
+        cancelAlert("USA")
+    }
+    async function cancelAlert(jobs) {
+        console.log(jobs)
+        axios.get('http://54.193.231.244:8000/unsubscribe', {
+            params: {
+                listner: 'Ankit',
+                channel: jobs
+            }
+        });
+
+        if (jobs === "USA") {
+            clearInterval(interval);
+        }
+    }
+
+    async function alert(jobs) {
+        console.log(jobs)
+        axios.get('http://54.193.231.244:8000/wantInfo', {
+            params: {
+                listner: 'Ankit',
+                channel: jobs
+            }
+        });
+
+        if (jobs === "USA") {
+            interval = setInterval(() => callAPIUSA(), 2000);
+        }
+    }
+
+    async function callAPIUSA() {
+        axios.get('http://54.193.231.244:8000/getData', {
+            params: {
+                listner: 'Ankit'
+            }
+        }).then(response => {
+            var USA = document.getElementById("displayJobs");
+            var displayJobs = response.data.filter(function (element) {
+                return element.channel === "USA"
+            });
+            if (displayJobs.length > 0) {
+                alertOnButton.remove();
+                USA.innerHTML = '';
+            }
+            console.log(displayJobs)
+            let bSoc = '';
+            for (var i = 0; i < displayJobs.length; i++) {
+                let job = JSON.parse(String(displayJobs[i].data))
+                bSoc += `<div class="outside-card">
+                                <h4 class="job-title"><b>Job ID: `+ job.id + ` </b></h4>
+                                <div class="inside-card">
+                                <div class="container1">
+                                    <p>Job Title</p>
+                                    <p>`+ job.jobTitle + ` </p>
+                                    <p>Job Location</p>
+                                    <p>`+ job.jobLocation + ` </p>
+                                    <p>Job Description</p>
+                                    <p>`+ job.jobDescription + ` </p>
+                                    <p>Salary Range</p>
+                                    <p>`+ job.salary1 + "-" + job.salary2 + ` </p>
+
+                                </div>
+                                <div class="container2">
+                                    <div class=star-details>
+                                        <div class="topShooter">
+                                            <!--<img src="USA-player-svgrepo-com.svg" alt="Avatar" style="width:100%">>                    
+                                            <div class="container">
+                                            <h4><b></b></h4>
+                                            <p>Score: `+ job.salary1 + `</p>
+                                            <p>Team: `+ job.jobTitle + `</p>
+                                            </div>
+                                        </div>
+                                        <div class="topPasser">
+                                            <!--<img src="USA-player-svgrepo-com.svg" alt="Avatar" style="width:100%">>                    
+                                            <div class="container">
+                                            <h4><b></b></h4>
+                                            <p>Score: `+ job.salary2 + ` </p>
+                                            <p>Team: `+ job.jobLocation + `</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>`;
+                USA.innerHTML = bSoc;
+            }
+        })
+    }
+
+</script>
+    <!-- for button CSS -->
+    <!-- <script src="js/jquery-3.2.1.slim.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script> -->
+
+</html>
